@@ -12,13 +12,9 @@ const User = require('../../../models/user');
 */
 exports.register = (req, res) => {
   const { username, password } = req.body;
-
-  console.log("body:", req.body);
-  console.log("username:", username);
   let newUser = null;
 
   const create = user => {
-    console.log("user:", user);
     if (user) {
       throw new Error("User already exists.");
     } else {
@@ -28,7 +24,7 @@ exports.register = (req, res) => {
 
   const count = user => {
     newUser = user;
-    return User.count({}).exec();
+    return User.countDocuments({}).exec();
   };
 
   const assign = count => {
