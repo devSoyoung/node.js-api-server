@@ -28,7 +28,7 @@ app.listen(port, () => {
   console.log(`express is running on port ${port}`);
 });
 
-app.use('/api', require('./routes/api'));
+app.use('/api', require('./src/routes/api'));
 
 // mongoDB 와 연결 설정
 mongoose.connect(config.mongodbUri, { useNewUrlParser: true });
