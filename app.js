@@ -1,34 +1,29 @@
 // 필요한 라이브러리 로드
-const express = require('express');
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
+const Koa = require('koa');
+
+const logger = require('koa-logger');
+const bodyParser = require('koa-bodyparser');
 const mongoose = require('mongoose');
 
 // 설정 로드
 const config = require('./config');
 const port = process.env.PORT || 3000;
 
-const app = express();
+const app = new Koa();
+const router = require('./src/routes');
 
-// bodyParser middleware
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// Use logger, body parser middleware
+app.use(logger());
+app.use(bodyParser());
 
-// morgan middleware: for log
-app.use(morgan('dev'));
+// Router 미들웨어 적용
+app.use(router.routes());
+app.use(router.allowedMethods());
 
-// JWT 위한 secret key 설정
-app.set('jwt-secret', config.secret);
-
-app.get('/', (req, res) => {
-  res.send('Hello JWT');
-});
-
-app.listen(port, () => {
+// PORT 오픈
+const server = app.listen(port, () => {
   console.log(`express is running on port ${port}`);
 });
-
-app.use('/api', require('./src/routes/api'));
 
 // mongoDB 와 연결 설정
 mongoose.connect(config.mongodbUri, { useNewUrlParser: true });
@@ -37,3 +32,5 @@ db.on('error', console.error);
 db.once('open', () => {
   console.log('connected to mongodb server');
 });
+
+module.exports = server;
